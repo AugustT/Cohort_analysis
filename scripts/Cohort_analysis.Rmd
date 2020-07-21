@@ -1,0 +1,144 @@
+---
+title: "Data Syntesis - Cohort analysis"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Introduction
+
+This R notebook is a rapid analysi of the cohort data produced as part of the data synthesis of citizen science projects
+
+```{r setup, echo=FALSE, results=FALSE}
+library(plotly)
+library(readxl)
+library(tidyr)
+library(reshape2)
+```
+
+# Data
+
+Lets load in the data, it is currently seperate sheets in an excel file. Lets pull out the seperate sheets and assign to `data.frame`s
+
+```{r load_data, message=FALSE}
+summary <- read_excel(path = '../data/BES citsci data summary v3.xlsx', sheet = 1)
+metadata <- read_excel(path = '../data/BES citsci data summary v3.xlsx', sheet = 2)
+retention_tasks <- read_excel(path = '../data/BES citsci data summary v3.xlsx', sheet = 3)
+retention_time <- read_excel(path = '../data/BES citsci data summary v3.xlsx', sheet = 4)
+ppt_inequality <- read_excel(path = '../data/BES citsci data summary v3.xlsx', sheet = 5)
+```
+
+I think I need to spread the cohort data so that time is represented in columns
+
+```{r}
+ret <- pivot_wider(data = retention_time, names_from = 'Session', values_from = 'NumberOfPeople')
+head(ret)
+
+# easy to view but not he format for ggplot
+
+retention_time$CohortSession <- (retention_time$Session + 1) - retention_time$Cohort 
+retention_time$ProjectCohort <- paste(retention_time$ProjectCode, 
+                                      retention_time$Cohort,
+                                      sep = '_')
+retention_time$ProjectName <- NA
+retention_time$ProjectName <- summary$ProjectName[match(retention_time$ProjectCode, summary$ProjectCode)]
+retention_time$ProjectName[is.na(retention_time$ProjectName)] <-
+  as.character(retention_time$ProjectCode[is.na(retention_time$ProjectName)])
+```
+
+That works. So now can we do an initial visualisation of the data
+
+```{r}
+p <- ggplot(retention_time, aes(x = CohortSession, y = NumberOfPeople, group = ProjectCohort)) +
+  geom_line(aes(colour = ProjectName)) +
+  theme(legend.position = "none") 
+ggplotly(p, tooltip = c('group'))
+```
+
+Okay now we need to average across cohorts in the same project and rescale so they all start with the same value
+
+```{r}
+# Rescale
+rescale <- function(x){
+  
+  (x/max(x)) * 100
+  
+}
+
+retention_time$NumberOfPeopleRescaled <- NA
+
+for(i in unique(retention_time$ProjectCohort)){
+  
+  retention_time$NumberOfPeopleRescaled[retention_time$ProjectCohort == i] <-
+    rescale(retention_time$NumberOfPeople[retention_time$ProjectCohort == i])
+  
+}
+
+
+p <- ggplot(retention_time, aes(x = CohortSession, y = NumberOfPeopleRescaled, group = ProjectCohort)) +
+  geom_line(aes(colour = ProjectName)) +
+  theme(legend.position = "none") 
+ggplotly(p, tooltip = c('group'))
+```
+And now average across projects
+
+```{r}
+# group and average
+av_ret <- tapply(retention_time$NumberOfPeopleRescaled,
+                 INDEX = list(retention_time$ProjectCode,
+                              retention_time$CohortSession),
+                 FUN = mean)
+
+# Put into long format
+av_ret <- melt(av_ret, varnames = c('ProjectCode', 'CohortSession'), value.name = 'NumberOfPeopleRescaled')
+
+av_ret$ProjectName <- summary$ProjectName[match(av_ret$ProjectCode, summary$ProjectCode)]
+av_ret$ProjectName[is.na(av_ret$ProjectName)] <-
+  as.character(av_ret$ProjectCode[is.na(av_ret$ProjectName)])
+
+p <- ggplot(av_ret, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectName)) +
+  geom_line(aes(colour = ProjectName)) +
+  geom_point(aes(colour = ProjectName)) +
+  scale_y_continuous(trans='log10') +
+  theme(legend.position = "none") 
+ggplotly(p, tooltip = c('group'))
+```
+
+After the first year these actually look very similar
+
+```{r}
+retention_time$NumberOfPeopleRescaled <- NA
+
+retention_time <- retention_time[retention_time$CohortSession != 1,]
+
+for(i in unique(retention_time$ProjectCohort)){
+  
+  retention_time$NumberOfPeopleRescaled[retention_time$ProjectCohort == i] <-
+    rescale(retention_time$NumberOfPeople[retention_time$ProjectCohort == i])
+  
+}
+
+# group and average
+av_ret2 <- tapply(retention_time$NumberOfPeopleRescaled,
+                 INDEX = list(retention_time$ProjectCode,
+                              retention_time$CohortSession),
+                 FUN = mean)
+
+# Put into long format
+av_ret2 <- melt(av_ret2, varnames = c('ProjectCode', 'CohortSession'), value.name = 'NumberOfPeopleRescaled')
+
+av_ret2$ProjectName <- 
+  summary$ProjectName[match(av_ret2$ProjectCode,
+                            summary$ProjectCode)]
+av_ret2$ProjectName[is.na(av_ret2$ProjectName)] <-
+  as.character(av_ret2$ProjectCode[is.na(av_ret2$ProjectName)])
+
+p <- ggplot(av_ret2, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectName)) +
+  geom_line(aes(colour = ProjectName)) +
+  geom_point(aes(colour = ProjectName)) +
+  scale_y_continuous(trans = 'log10') +
+  theme(legend.position = "none") 
+ggplotly(p, tooltip = c('group'))
+```
