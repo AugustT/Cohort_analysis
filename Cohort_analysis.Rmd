@@ -17,7 +17,7 @@ library(reshape2)
 
 Lets load in the data, it is currently seperate sheets in an excel file. Lets pull out the seperate sheets and assign to `data.frame`s
 
-```{r load_data, message=FALSE}
+```{r load_data, message=FALSE, echo=FALSE}
 summary <- read_excel(path = 'data/BES citsci data summary v3.xlsx', sheet = 1)
 metadata <- read_excel(path = 'data/BES citsci data summary v3.xlsx', sheet = 2)
 retention_tasks <- read_excel(path = 'data/BES citsci data summary v3.xlsx', sheet = 3)
@@ -27,7 +27,7 @@ ppt_inequality <- read_excel(path = 'data/BES citsci data summary v3.xlsx', shee
 
 I think I need to spread the cohort data so that time is represented in columns
 
-```{r}
+```{r, echo=FALSE}
 ret <- pivot_wider(data = retention_time, names_from = 'Session', values_from = 'NumberOfPeople')
 head(ret)
 
@@ -45,20 +45,21 @@ retention_time$ProjectName[is.na(retention_time$ProjectName)] <-
 
 That works. So now can we do an initial visualisation of the data
 
-```{r}
+```{r, echo=FALSE}
 p <- ggplot(retention_time, aes(x = CohortSession, y = NumberOfPeople, group = ProjectCohort)) +
   geom_line(aes(colour = ProjectName)) +
   theme(legend.position = "none") 
 ggplotly(p, tooltip = c('group'))
+
 ```
 
 Okay now we need to average across cohorts in the same project and rescale so they all start with the same value
 
-```{r}
+```{r, echo=FALSE}
 # Rescale
 rescale <- function(x){
   
-  (x/max(x)) * 100
+  (x/x[1]) * 100
   
 }
 
@@ -76,10 +77,11 @@ p <- ggplot(retention_time, aes(x = CohortSession, y = NumberOfPeopleRescaled, g
   geom_line(aes(colour = ProjectName)) +
   theme(legend.position = "none") 
 ggplotly(p, tooltip = c('group'))
+
 ```
 And now average across projects
 
-```{r}
+```{r, echo=FALSE}
 # group and average
 av_ret <- tapply(retention_time$NumberOfPeopleRescaled,
                  INDEX = list(retention_time$ProjectCode,
@@ -97,14 +99,14 @@ p <- ggplot(av_ret, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectName)) +
   geom_line(aes(colour = ProjectName)) +
   geom_point(aes(colour = ProjectName)) +
-  scale_y_continuous(trans='log10') +
   theme(legend.position = "none") 
 ggplotly(p, tooltip = c('group'))
+
 ```
 
 After the first year these actually look very similar
 
-```{r}
+```{r, echo=FALSE}
 retention_time$NumberOfPeopleRescaled <- NA
 
 retention_time <- retention_time[retention_time$CohortSession != 1,]
@@ -135,7 +137,6 @@ p <- ggplot(av_ret2, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectName)) +
   geom_line(aes(colour = ProjectName)) +
   geom_point(aes(colour = ProjectName)) +
-  scale_y_continuous(trans = 'log10') +
   theme(legend.position = "none") 
 ggplotly(p, tooltip = c('group'))
 ```
