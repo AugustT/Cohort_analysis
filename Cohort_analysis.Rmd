@@ -163,7 +163,7 @@ met <- as.data.frame(t(metadata))
 colnames(met) <- met[1,]
 met$ProjectCode <- rownames(met)
 met <- met[2:nrow(met), -10]
-names(met)
+# names(met)
 av_ret3 <- merge(av_ret2, met, by = 'ProjectCode', all.x = TRUE, all.y = FALSE)
 
 # TargetAudience
@@ -173,7 +173,7 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = TargetAudience)) +
   ggtitle('TargetAudience')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 
 # ExperienceRequired
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
@@ -182,7 +182,7 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = ExperienceRequired)) +
   ggtitle('ExperienceRequired')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 
 # EffortRequired
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
@@ -191,7 +191,7 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = EffortRequired)) +
   ggtitle('EffortRequired')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 
 # LocationsPredefined
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
@@ -200,7 +200,7 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = LocationsPredefined)) +
   ggtitle('LocationsPredefined')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 
 # SubmissionFeedback
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
@@ -209,7 +209,7 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = SubmissionFeedback)) +
   ggtitle('SubmissionFeedback')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 
 # SummaryFeedback
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
@@ -218,7 +218,7 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = SummaryFeedback)) +
   ggtitle('SummaryFeedback')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 
 # OtherWaysToContribute
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
@@ -227,5 +227,5 @@ p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
   geom_point(aes(colour = OtherWaysToContribute)) +
   ggtitle('OtherWaysToContribute')
 
-ggplotly(p)
+ggplotly(p, tooltip = c('group'))
 ```
