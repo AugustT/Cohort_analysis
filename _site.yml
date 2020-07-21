@@ -7,6 +7,4 @@ navbar:
       href: index.html
     - text: "Cohort analysis"
       href: Cohort_analysis.html
-output:
-  html_document:
-  theme: cosmo
+output: html_document
