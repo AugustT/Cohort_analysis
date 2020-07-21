@@ -1,0 +1,12 @@
+name: "Cohort analysis"
+output_dir: "docs"
+navbar:
+  title: "Cohort analysis"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Cohort analysis"
+      href: Cohort_analysis.html
+output:
+  html_document:
+  theme: cosmo
