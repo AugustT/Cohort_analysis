@@ -48,7 +48,8 @@ That works. So now can we do an initial visualisation of the data
 ```{r, echo=FALSE}
 p <- ggplot(retention_time, aes(x = CohortSession, y = NumberOfPeople, group = ProjectCohort)) +
   geom_line(aes(colour = ProjectName)) +
-  theme(legend.position = "none") 
+  theme(legend.position = "none") +
+  ggtitle('Raw data')
 ggplotly(p, tooltip = c('group'))
 
 ```
@@ -75,7 +76,8 @@ for(i in unique(retention_time$ProjectCohort)){
 
 p <- ggplot(retention_time, aes(x = CohortSession, y = NumberOfPeopleRescaled, group = ProjectCohort)) +
   geom_line(aes(colour = ProjectName)) +
-  theme(legend.position = "none") 
+  theme(legend.position = "none")  +
+  ggtitle('Rescaled cohorts')
 ggplotly(p, tooltip = c('group'))
 
 ```
@@ -99,7 +101,8 @@ p <- ggplot(av_ret, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectName)) +
   geom_line(aes(colour = ProjectName)) +
   geom_point(aes(colour = ProjectName)) +
-  theme(legend.position = "none") 
+  theme(legend.position = "none")  +
+  ggtitle('Project averages')
 ggplotly(p, tooltip = c('group'))
 
 ```
@@ -137,6 +140,92 @@ p <- ggplot(av_ret2, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectName)) +
   geom_line(aes(colour = ProjectName)) +
   geom_point(aes(colour = ProjectName)) +
-  theme(legend.position = "none") 
+  theme(legend.position = "none")  +
+  ggtitle('Project averages from year 2')
 ggplotly(p, tooltip = c('group'))
+```
+And on the log scale...
+
+
+```{r, echo=FALSE}
+p <- ggplot(av_ret2, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectName)) +
+  geom_line(aes(colour = ProjectName)) +
+  geom_point(aes(colour = ProjectName)) +
+  scale_y_log10() +
+  theme(legend.position = "none")  +
+  ggtitle('Project averages from year 2 - log10 scale')
+ggplotly(p, tooltip = c('group'))
+```
+
+```{r, echo=FALSE}
+met <- as.data.frame(t(metadata))
+colnames(met) <- met[1,]
+met$ProjectCode <- rownames(met)
+met <- met[2:nrow(met), -10]
+names(met)
+av_ret3 <- merge(av_ret2, met, by = 'ProjectCode', all.x = TRUE, all.y = FALSE)
+
+# TargetAudience
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = TargetAudience)) +
+  geom_point(aes(colour = TargetAudience)) +
+  ggtitle('TargetAudience')
+
+ggplotly(p)
+
+# ExperienceRequired
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = ExperienceRequired)) +
+  geom_point(aes(colour = ExperienceRequired)) +
+  ggtitle('ExperienceRequired')
+
+ggplotly(p)
+
+# EffortRequired
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = EffortRequired)) +
+  geom_point(aes(colour = EffortRequired)) +
+  ggtitle('EffortRequired')
+
+ggplotly(p)
+
+# LocationsPredefined
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = LocationsPredefined)) +
+  geom_point(aes(colour = LocationsPredefined)) +
+  ggtitle('LocationsPredefined')
+
+ggplotly(p)
+
+# SubmissionFeedback
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = SubmissionFeedback)) +
+  geom_point(aes(colour = SubmissionFeedback)) +
+  ggtitle('SubmissionFeedback')
+
+ggplotly(p)
+
+# SummaryFeedback
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = SummaryFeedback)) +
+  geom_point(aes(colour = SummaryFeedback)) +
+  ggtitle('SummaryFeedback')
+
+ggplotly(p)
+
+# OtherWaysToContribute
+p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
+                        group = ProjectCode)) +
+  geom_line(aes(colour = OtherWaysToContribute)) +
+  geom_point(aes(colour = OtherWaysToContribute)) +
+  ggtitle('OtherWaysToContribute')
+
+ggplotly(p)
 ```
