@@ -59,7 +59,7 @@ Okay now we need to average across cohorts in the same project and rescale so th
 # Rescale
 rescale <- function(x){
   
-  (x/x[1]) * 100
+  (x/max(x)) * 100
   
 }
 
