@@ -1,6 +1,11 @@
 ---
 title: "Cohort analysis"
 ---
+<style>
+    body .main-container {
+        max-width: 2000px;
+    }
+</style>
 
 # Introduction
 
@@ -11,6 +16,8 @@ library(plotly)
 library(readxl)
 library(tidyr)
 library(reshape2)
+
+knitr::opts_chunk$set(out.width = "80%", fig.align="center")
 ```
 
 # Data
@@ -165,67 +172,124 @@ met$ProjectCode <- rownames(met)
 met <- met[2:nrow(met), -10]
 # names(met)
 av_ret3 <- merge(av_ret2, met, by = 'ProjectCode', all.x = TRUE, all.y = FALSE)
+```
 
+What is your target audience?
+* Wide audience (i.e. 'anyone', general public, interested 'novice')
+* Specific audience (e.g. farmers, birdwatchers)
+
+```{r, echo=FALSE}
 # TargetAudience
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = TargetAudience)) +
   geom_point(aes(colour = TargetAudience)) +
-  ggtitle('TargetAudience')
+  ggtitle('TargetAudience') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
+```
 
+What experience or skill is required to take part?
+
+* None: anyone can do it by following simple instructions
+* Expertise is required but training is given (supporting materials etc.)
+* Pre-existing expertise is required (e.g. skill in identifying birds)
+
+```{r, echo=FALSE}
 # ExperienceRequired
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = ExperienceRequired)) +
   geom_point(aes(colour = ExperienceRequired)) +
-  ggtitle('ExperienceRequired')
+  ggtitle('ExperienceRequired') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
+```
 
+What effort is required to take part?
+
+* Quick and easy = little or no planning required to take part
+* Specific planning = requires time, special equipment and/or travel to a particular site
+
+```{r, echo=FALSE}
 # EffortRequired
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = EffortRequired)) +
   geom_point(aes(colour = EffortRequired)) +
-  ggtitle('EffortRequired')
+  ggtitle('EffortRequired') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
+```
 
+Does participation require visits to pre-defined locations?
+
+* Yes
+* No
+
+```{r, echo=FALSE}
 # LocationsPredefined
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = LocationsPredefined)) +
   geom_point(aes(colour = LocationsPredefined)) +
-  ggtitle('LocationsPredefined')
+  ggtitle('LocationsPredefined') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
+```
 
+Is feedback given at or near the time of submission?
+
+* No
+* Yes, general
+* Yes, detailed and/or personal
+
+```{r, echo=FALSE}
 # SubmissionFeedback
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = SubmissionFeedback)) +
   geom_point(aes(colour = SubmissionFeedback)) +
-  ggtitle('SubmissionFeedback')
+  ggtitle('SubmissionFeedback') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
+```
 
+Is static feedback given (e.g. reports at the end of or at key times within the project)? 
+
+* Yes
+* No
+
+```{r, echo=FALSE}
 # SummaryFeedback
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = SummaryFeedback)) +
   geom_point(aes(colour = SummaryFeedback)) +
-  ggtitle('SummaryFeedback')
+  ggtitle('SummaryFeedback') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
+```
 
+In addition to field-based recording, are there other ways for your target audience to contribute within the project?
+
+* Yes
+* No
+
+```{r, echo=FALSE}
 # OtherWaysToContribute
 p <- ggplot(av_ret3, aes(x = CohortSession, y = NumberOfPeopleRescaled,
                         group = ProjectCode)) +
   geom_line(aes(colour = OtherWaysToContribute)) +
   geom_point(aes(colour = OtherWaysToContribute)) +
-  ggtitle('OtherWaysToContribute')
+  ggtitle('OtherWaysToContribute') + 
+  theme(legend.title = element_blank())
 
 ggplotly(p, tooltip = c('group'))
 ```
