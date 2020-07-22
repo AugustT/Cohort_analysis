@@ -3,13 +3,13 @@ title: "Cohort analysis"
 ---
 <style>
     body .main-container {
-        max-width: 2000px;
+        max-width: 1000px;
     }
 </style>
 
 # Introduction
 
-This R notebook is a rapid analysi of the cohort data produced as part of the data synthesis of citizen science projects
+This R notebook is a rapid analysis of the cohort data produced as part of the data synthesis of citizen science projects
 
 ```{r setup, echo=FALSE, results=FALSE, message=FALSE}
 library(plotly)
@@ -17,7 +17,7 @@ library(readxl)
 library(tidyr)
 library(reshape2)
 
-knitr::opts_chunk$set(out.width = "80%", fig.align="center")
+knitr::opts_chunk$set(out.width = "95%", fig.align="center", out.height = "600px")
 ```
 
 # Data
